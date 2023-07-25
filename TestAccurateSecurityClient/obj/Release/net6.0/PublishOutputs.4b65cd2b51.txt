@@ -1,0 +1,7 @@
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\TestAccurateSecurityClient.exe
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\appsettings.Development.json
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\appsettings.json
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\TestAccurateSecurityClient.dll
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\TestAccurateSecurityClient.deps.json
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\TestAccurateSecurityClient.runtimeconfig.json
+C:\Users\erick\source\repos\TestAccurateSecurityClient\TestAccurateSecurityClient\obj\Release\net6.0\PubTmp\Out\TestAccurateSecurityClient.pdb

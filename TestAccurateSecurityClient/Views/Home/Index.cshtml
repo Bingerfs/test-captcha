@@ -1,0 +1,190 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Comprehensive IP address data comparison, IP geolocation API and database</h1>
+    <title>Valores del servicio</title>
+    <div class="container">
+        <div class="form-group col-md-2">
+            <label for="campo">Ip:</label>
+            <input type="text" class="form-control" id="ip" name="ip" placeholder="Ingresa una ip">
+            <br/>
+            <button type="button" onclick="setIp(document.getElementById('ip').value)" class="btn btn-primary">Enviar</button>
+        </div>
+    </div>
+    <br />
+    <div class="container">
+        <div class="row align-items-start">
+            <div id="data-container-IPinfo" class="col" style="background-color:cornflowerblue"><h1>IPinfo</h1><br /></div>
+            <div id="data-container-IPify" class="col" style="background-color:gray"><h1>IPify</h1><br /></div>
+            <div id="data-container-Rapidapi" class="col" style="background-color:darkcyan"><h1>Rapidapi</h1><br /></div>
+            <div id="data-container-ipqualityscore" class="col" style="background-color:burlywood"><h1>ipqualityscore</h1><br /></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var requestIP;
+        var dataIP;
+
+        window.addEventListener("load", async function(){
+            const requestIPinfo = await fetch("https://ipinfo.io/json?token=1df07f3353c934")
+            const jsonResponseIPinfo = await requestIPinfo.json()
+
+            console.log(jsonResponseIPinfo.ip, jsonResponseIPinfo.country)
+
+            requestIP = jsonResponseIPinfo.ip
+            dataIP = { ip: jsonResponseIPinfo.ip }
+
+            document.getElementById("ip").value = dataIP.ip
+
+            DrawDiv()
+        });
+
+        function DrawDiv(){
+            recordCallIPinfo()
+            recordDataIPify()
+            recordDataRapidapi()
+            recordDataipqualityscore()
+        }
+
+        async function setIp(ip){
+             requestIP = await fetch(`https://api.ipify.org?format=json`)
+             dataIP = {ip:ip};
+            DrawDiv()
+        }
+
+        function clearDivContainer(div){
+            while (div.firstChild) {
+                div.removeChild(div.firstChild);
+             }
+        }
+
+        async function recordCallIPinfo() {
+            let request = await fetch(`https://ipinfo.io/${dataIP.ip}/?token=1df07f3353c934`)
+            let data = await request.json()
+            recordDataIPinfo(data)
+        }
+
+        function recordDataIPinfo(data) {
+            console.log("Datos recibidos IPinfo: ",data)
+            console.log(data.ip, data.country)
+            let container = document.getElementById("data-container-IPinfo");
+
+            let h1 = document.createElement("h1");
+            h1.innerText = "IPinfo"
+
+            clearDivContainer(container)
+            container.append(h1)
+            container.append(document.createElement("br"))
+
+            drawValues(data, container);
+        }        
+
+        async function recordDataIPify() {
+            let container = document.getElementById("data-container-IPify");
+
+            let request = await fetch(`https://geo.ipify.org/api/v2/country,city,vpn?apiKey=at_z4L4AcJRgYAH3CVdHktXj4vO7mWfT&ipAddress=${dataIP.ip}`)
+            let data = await request.json()
+            console.log("Datos recibidos IPify: ", data)
+            let h1 = document.createElement("h1");
+            h1.innerText = "IPify"
+
+            clearDivContainer(container)
+            container.append(h1)
+            container.append(document.createElement("br"))
+
+            drawValues(data, container);https
+        }
+
+        async function recordDataRapidapi() {
+            let container = document.getElementById("data-container-Rapidapi");
+
+            let request = await fetch(`https://ip-reputation-geoip-and-detect-vpn.p.rapidapi.com/?ip=${dataIP.ip}`,
+                {
+                    headers: {
+                        'X-RapidAPI-Key': 'ddb1fc086bmshfc54466d7d6551cp1e0ed7jsnbbde79eaeffc',
+                        'X-RapidAPI-Host': 'ip-reputation-geoip-and-detect-vpn.p.rapidapi.com'
+                    }})
+            const data = await request.json()
+            console.log("Datos recibidos: Rapidapi", data)
+
+            let h1 = document.createElement("h1");
+            h1.innerText = "Rapidapi"
+
+            clearDivContainer(container)
+            container.append(h1)
+            container.append(document.createElement("br"))
+
+            drawValues(data, container);
+        }
+
+        async function recordDataipqualityscore() {
+            let container = document.getElementById("data-container-ipqualityscore");
+            let url = `https://minfraud.maxmind.com/minfraud/v2.0/score`;
+            let requestBodyJson = `
+                            {
+                                "device": {
+                                    "accept_language": 'en-US,en;q=0.8',
+                                    "ip_address": '${dataIP.ip}'
+                                }
+                            }
+                        `
+
+            let request = await fetch(url, {
+                method:'POST',
+                headers:{
+                    "Authorization": "Basic ODkwMzkxOnh6Wk0yQ19HbnlaWmxDa0d3RW04Yk9keGR3WWVmeHZDWFN2OF9tbWs=",
+                    "Content-Type": "application/json",
+                    "Content-Length": JSON.stringify(requestBodyJson).length,
+                    "Host": "minfraud.maxmind.com:443",
+                    "Transport":"close"
+                },
+                body: JSON.stringify(requestBodyJson)
+                
+            })
+            const data = await request.json()
+            console.log("Datos recibidos: ", data)
+
+            let h1 = document.createElement("h1")
+            h1.innerText = "IPqualityscore"
+
+            clearDivContainer(container)
+            container.append(h1)
+            container.append(document.createElement("br"))
+
+            drawValues(data, container);
+        }
+
+            // Función para dibujar los valores en el HTML
+        function drawValues(data, container) {
+            // Recorrer las propiedades del objeto JSON
+            for (var key in data) {
+                var value = data[key];
+
+                // Verificar si el valor es un objeto anidado
+                if (typeof value === 'object' && !Array.isArray(value)) {
+                    // Crear un contenedor para las propiedades anidadas
+                    var nestedContainer = document.createElement("div");
+                    nestedContainer.classList.add("nested-container");
+                    container.appendChild(nestedContainer);
+
+                    // Crear un título para la propiedad anidada
+                    var title = document.createElement("h2");
+                    title.innerHTML = key;
+                    nestedContainer.appendChild(title);
+
+                    // Llamar recursivamente a la función para las propiedades anidadas
+                    drawValues(value, nestedContainer);
+                } else {
+                    // Crear elementos HTML para mostrar cada valor y añadirlos al contenedor
+                    var label = document.createElement("p");
+                    label.innerHTML = key + ": " + value;
+                    container.appendChild(label);
+                }
+            }
+        }
+    </script>
+}
