@@ -82,9 +82,52 @@ namespace TestAccurateSecurityClient.Controllers
         }
 
         [HttpPost]
-        public IActionResult TestGoogleCaptcha(string tokenGoogle)
+        public async Task<IActionResult> TestGoogleCaptcha([FromForm] LoginCloudFlare loginCloudFlare)
         {
-            return View();
+            var secret_sey = "6LeuN08nAAAAAHf3-e3Fzlfqal-M0juelOJziz2B";
+
+            using (var client = new HttpClient())
+            {
+                //var formContent = new FormUrlEncodedContent(new[]
+                //{
+                //    new KeyValuePair<string, string>("secret", secret_sey),
+                //    new KeyValuePair<string, string>("response", loginCloudFlare.CfTurnstileResponse),
+                //    new KeyValuePair<string, string>("remoteip", "152.0.117.184")
+                //});
+
+                var formData = new MultipartFormDataContent();
+
+                formData.Add(new StringContent(secret_sey), "Secret");
+                formData.Add(new StringContent(loginCloudFlare.CfTurnstileResponse), "respuesta");
+                formData.Add(new StringContent(Request.HttpContext.Connection.RemoteIpAddress.ToString()), "control remoto");
+
+                //var json_content = new StringContent(JsonSerializer.Serialize(formContent));
+
+                var url_cloudflare = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+                client.DefaultRequestHeaders.Accept
+                    .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                client.DefaultRequestHeaders.Accept
+                    .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+
+                //var result = await client.PostAsync(url_cloudflare, json_content);
+                var result = await client.PostAsJsonAsync(url_cloudflare, formData);
+
+                var content_result = await result.Content.ReadAsStringAsync();
+
+                var json_result = JsonSerializer.Deserialize<CaptchaResponseCloudFlare>(content_result);
+
+                if (json_result.Success)
+                {
+                    return View("Success");
+                }
+                else
+                {
+                    return View("Failed");
+                }
+
+            }
         }
 
         [HttpPost]

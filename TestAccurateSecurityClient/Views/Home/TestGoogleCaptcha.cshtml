@@ -1,23 +1,21 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model LoginGoogle
 @{
 }
 
 @section Scripts{
     <script src="https://www.google.com/recaptcha/api.js?render=6LeuN08nAAAAAN2r2FVW_z1M2woK0icgqDyDdS3l"></script>
 }
-<form>
-    ESTO ES UNA PRUEBA
+<form id="form" method="post" asp-action="TestGoogleCaptcha" asp-controller="Home">
+    <input type="hidden" asp-for="GRecaptchaResponse" />
     <!-- Email input -->
     <div class="form-outline mb-4">
-        <input type="email" id="form2Example1" class="form-control" />
+        <input type="email" asp-for="email" class="form-control" />
         <label class="form-label" for="form2Example1">Email address</label>
     </div>
 
     <!-- Password input -->
     <div class="form-outline mb-4">
-        <input type="password" id="form2Example2" class="form-control" />
+        <input type="password" asp-for="password" class="form-control" />
         <label class="form-label" for="form2Example2">Password</label>
     </div>
 
@@ -44,6 +42,7 @@
             data-sitekey="6LeuN08nAAAAAN2r2FVW_z1M2woK0icgqDyDdS3l"
             data-callback='onSubmit'
             data-action='submit'
+            value ="Start"
             >
     <div id="demo-form">
         
@@ -80,6 +79,13 @@
                     // Add your logic to submit to your backend server here.
                 });
             });
+        }
+
+        function onSubmit(token) {
+            document.getElementById("GRecaptchaResponse").value=  token;
+            document.getElementById("form").submit();
+
+            
         }
     </script>
 </form>
